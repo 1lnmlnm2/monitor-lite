@@ -1,0 +1,41 @@
+# monitor-lite 固定 5 个目标；只允许本机 127.0.0.1，外部目标不进仓库。
+targets:
+  - name: deploy-8090
+    type: http
+    target: http://127.0.0.1:8090/health.txt
+    expect: 200
+    timeout: 3
+    warn: 0
+    crit: 0
+
+  - name: ops-8080
+    type: tcp
+    target: 127.0.0.1:8080
+    expect: open
+    timeout: 3
+    warn: 0
+    crit: 0
+
+  - name: ssh-22
+    type: tcp
+    target: 127.0.0.1:22
+    expect: open
+    timeout: 3
+    warn: 0
+    crit: 0
+
+  - name: disk-root
+    type: disk
+    target: /
+    expect: usage
+    timeout: 3
+    warn: 85
+    crit: 95
+
+  - name: mem
+    type: mem
+    target: mem
+    expect: usage
+    timeout: 3
+    warn: 80
+    crit: 90

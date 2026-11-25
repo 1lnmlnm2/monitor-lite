@@ -104,6 +104,8 @@ systemctl list-timers --all monitor-lite.timer
 
 - 单机；不做多机编排、集群探活或分布式锁。
 - 只写本地 JSONL 和 journal；无外部告警通道、无面板、无数据库。
+- 目标口径固定为 5 个，不增加 proc 目标；proc 类型仅由 selftest 覆盖。
+- 验收期间人工停过一次 `deploy-kit-site` 做受控故障注入；monitor-lite 脚本本身不停任何服务。今后验收不得停/改前两个项目的服务与仓库，除非事先批准。
 - timer 间隔要改两处：`conf/monitor.env.example` 的 `INTERVAL=60`（文档口径）和 `systemd/monitor-lite.timer` 的 `OnBootSec/OnUnitActiveSec=60s`（实际调度）；改完需 `systemctl daemon-reload && systemctl restart monitor-lite.timer`。
 - 不做历史压缩、轮转或自动清理；`data/` 会按天增长，由使用者自行归档。
 - `--target` 只支持已有目标名；新增目标仍需改 YAML。

@@ -1,0 +1,11 @@
+[Unit]
+Description=monitor-lite one-shot probe
+After=network.target
+
+[Service]
+Type=oneshot
+Nice=10
+WorkingDirectory=/root/monitor-lite
+EnvironmentFile=-/opt/monitor-lite/monitor.env
+ExecStart=/root/monitor-lite/monitor.sh --once
+TimeoutStartSec=90

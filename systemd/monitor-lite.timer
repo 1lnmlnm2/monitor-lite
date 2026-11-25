@@ -1,0 +1,12 @@
+[Unit]
+Description=monitor-lite 60s timer
+
+[Timer]
+OnBootSec=60s
+OnUnitActiveSec=60s
+AccuracySec=5s
+Persistent=true
+Unit=monitor-lite.service
+
+[Install]
+WantedBy=timers.target

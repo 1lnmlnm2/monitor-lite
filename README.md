@@ -71,7 +71,8 @@ systemctl list-timers --all monitor-lite.timer
     crit: 0
 ```
 
-改完先 `bash monitor.sh --once` 验证解析；缺字段、非法 type、非本机 URL 或 `0 < warn < crit` 不满足时，统一打印 `[FAIL]` 并 `exit 64`，不写数据。默认 5 个目标已覆盖 HTTP/TCP/磁盘/内存；`proc` 类型由 selftest 覆盖，默认清单不额外塞入第 6 个目标。
+改完先 `bash monitor.sh --once` 验证解析；缺字段、非法 type、非本机 URL 或 `0 < warn < crit` 不满足时，统一打印 `[FAIL]` 并 `exit 64`，不写数据。默认 5 个目标已覆盖 HTTP/TCP/磁盘/内存；`proc` 类型已实现，默认 5 个目标未启用，仅在 selftest 覆盖。
+`MONITOR_TARGETS` 和 `MONITOR_CONF` 是自检与本地覆盖用的环境变量，默认分别指向仓库 `checks/targets.yaml` 和 `/opt/monitor-lite/monitor.env`，不作为对外配置项。
 
 ## 6. 告警规则
 
@@ -104,8 +105,8 @@ systemctl list-timers --all monitor-lite.timer
 
 - 单机；不做多机编排、集群探活或分布式锁。
 - 只写本地 JSONL 和 journal；无外部告警通道、无面板、无数据库。
-- 目标口径固定为 5 个，不增加 proc 目标；proc 类型仅由 selftest 覆盖。
-- 验收期间人工停过一次 `deploy-kit-site` 做受控故障注入；monitor-lite 脚本本身不停任何服务。今后验收不得停/改前两个项目的服务与仓库，除非事先批准。
+- 目标口径固定为 5 个；`proc` 类型已实现，默认 5 个目标未启用，仅在 selftest 覆盖。
+- 验收期间曾人工 stop/start 过一次 `deploy-kit-site`（详见 `docs/02` §A2/A3）；monitor-lite 自身不停止任何服务。今后验收不得停/改前两个项目的服务与仓库，除非事先批准。
 - timer 间隔要改两处：`conf/monitor.env.example` 的 `INTERVAL=60`（文档口径）和 `systemd/monitor-lite.timer` 的 `OnBootSec/OnUnitActiveSec=60s`（实际调度）；改完需 `systemctl daemon-reload && systemctl restart monitor-lite.timer`。
 - 不做历史压缩、轮转或自动清理；`data/` 会按天增长，由使用者自行归档。
 - `--target` 只支持已有目标名；新增目标仍需改 YAML。
